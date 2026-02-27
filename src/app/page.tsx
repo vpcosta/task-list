@@ -1,3 +1,6 @@
+import { ClearTasks } from "@/components/clear-tasks";
+import { DeleteTask } from "@/components/delete-task";
+import { EditTask } from "@/components/edit-task";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,23 +19,9 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import {
-  Edit,
-  List,
-  ListCheck,
-  ListChecks,
-  ListX,
-  Plus,
-  Trash,
-} from "lucide-react";
+import { List, ListCheck, ListChecks, ListX, Plus, Trash } from "lucide-react";
 
 export default function Home() {
   return (
@@ -72,28 +61,9 @@ export default function Home() {
 
               <p className="flex-1 px-2 text-sm">Estudar React</p>
               <div className="flex items-center gap-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Edit
-                      size={16}
-                      className="cursor-pointer h-6 w-6 p-1 rounded-sm hover:bg-blue-100 text-blue-600"
-                    />
-                  </DialogTrigger>
+                <EditTask />
 
-                  <DialogContent>
-                    <DialogHeader>Editar Tarefa</DialogHeader>
-
-                    <div className="flex gap-2">
-                      <Input placeholder="Nome da tarefa" />
-
-                      <Button className="cursor-pointer">Salvar</Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                <Trash
-                  size={16}
-                  className="cursor-pointer h-6 w-6 p-1 rounded-sm hover:bg-red-100 text-red-600"
-                />
+                <DeleteTask />
               </div>
             </div>
           </div>
@@ -105,35 +75,8 @@ export default function Home() {
               <ListCheck size={14} />
               <p className="text-sm">Tarefas concluídas (3/3)</p>
             </div>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="text-xs h-7 cursor-pointer"
-                >
-                  <Trash />
-                  Limpar Tarefas Concluídas
-                </Button>
-              </AlertDialogTrigger>
 
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Deseja realmente apagar 1 item(s)?
-                  </AlertDialogTitle>
-                </AlertDialogHeader>
-
-                <AlertDialogFooter className="flex flex-row w-full">
-                  <AlertDialogAction className="flex w-1/2">
-                    Sim
-                  </AlertDialogAction>
-
-                  <AlertDialogCancel className="flex w-1/2">
-                    Cancelar
-                  </AlertDialogCancel>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <ClearTasks />
           </div>
 
           <div className="mt-4 mb-2 w-full h-2 rounded-md bg-gray-200">
