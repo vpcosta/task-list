@@ -2,6 +2,7 @@
 import { addTask } from "@/actions/add-task";
 import { deleteTask } from "@/actions/delete-task";
 import { getTasks } from "@/actions/get-tasks-db";
+import { toggleTaskStatus } from "@/actions/toggle-task";
 import { updateTask } from "@/actions/update-task";
 import { ClearTasks } from "@/components/clear-tasks";
 import { DeleteTask } from "@/components/delete-task";
@@ -17,12 +18,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tasks } from "@/generated/prisma/client";
-import { List, ListCheck, ListChecks, ListX, Plus } from "lucide-react";
+import {
+  List,
+  ListCheck,
+  ListChecks,
+  ListX,
+  LoaderCircle,
+  Plus,
+} from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Home() {
   const [tasks, setTasks] = useState<Tasks[]>([]);
   const [task, setTask] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleGetTasks() {
     try {
@@ -37,9 +47,14 @@ export default function Home() {
   }
 
   async function handleAddTask() {
+    setLoading(true);
     const tempTask = { id: crypto.randomUUID(), task, done: false };
 
-    if (!task) return;
+    if (task.length === 0 || !task) {
+      setLoading(false);
+      toast.error("Insira uma tarefa!");
+      return;
+    }
 
     setTasks((prev) => [...prev, tempTask]);
     setTask("");
@@ -50,15 +65,22 @@ export default function Home() {
       if (!newTask) return;
 
       setTasks((prev) => prev.map((t) => (t.id === tempTask.id ? newTask : t)));
+      setLoading(false);
 
       await handleGetTasks();
       setTask("");
 
+      toast.success("Tarefa adicionada com sucesso!");
+
       return newTask;
     } catch (err) {
       setTasks((prev) => prev.filter((t) => t.id !== tempTask.id));
+      setLoading(false);
+
       console.log(err);
     }
+
+    setLoading(false);
   }
 
   async function handleDeleteTask(id: string) {
@@ -69,6 +91,8 @@ export default function Home() {
       if (!id) return;
 
       await deleteTask(id);
+
+      toast.error("Tarefa deletada!");
 
       await handleGetTasks();
     } catch (err) {
@@ -86,9 +110,37 @@ export default function Home() {
 
     try {
       await updateTask(id, newName);
+
+      toast.info("Atividade atualizada!");
     } catch (err) {
       setTasks(previousTasks);
       console.error(err);
+    }
+  }
+
+  async function handleToggleTask(id: string) {
+    const previousTasks = [...tasks];
+
+    try {
+      setTasks((prev) => {
+        const updatedTasks = prev.map((task) => {
+          if (task.id === id) {
+            return {
+              ...task,
+              done: !task.done,
+            };
+          } else {
+            return task;
+          }
+        });
+
+        return updatedTasks;
+      });
+
+      await toggleTaskStatus(id);
+    } catch (err) {
+      setTasks(previousTasks);
+      console.log(err);
     }
   }
 
@@ -115,7 +167,7 @@ export default function Home() {
             variant="default"
             className="cursor-pointer"
           >
-            <Plus />
+            {loading ? <LoaderCircle className="animate-spin" /> : <Plus />}
             Adicionar Tarefa
           </Button>
         </CardHeader>
@@ -141,14 +193,27 @@ export default function Home() {
           </div>
 
           <div className="mt-4 border-b">
+            {tasks.length === 0 && (
+              <p className="text-sm text-slate-500 mt-6 mb-4">
+                Sua lista de tarefas está vazia
+              </p>
+            )}
+
             {tasks.map((task) => (
               <div
-                className="h-12 flex justify-between items-center border-t"
+                onClick={() => handleToggleTask(task.id)}
+                className="h-12 flex hover:bg-slate-50 hover:text-slate-600 cursor-pointer justify-between items-center border-t"
                 key={task.id}
               >
-                <div className="w-1 h-full bg-red-300"></div>
+                <div
+                  className={`${task.done ? "bg-green-400" : "bg-red-400"} w-1 h-full`}
+                ></div>
 
-                <p className="flex-1 px-2 text-sm">{task.task}</p>
+                <p
+                  className={`${task.done ? "text-slate-400  italic line-through" : ""} flex-1 px-2 text-sm`}
+                >
+                  {task.task}
+                </p>
                 <div className="flex items-center gap-2">
                   <EditTask
                     id={task.id}
