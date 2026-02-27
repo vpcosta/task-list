@@ -1,16 +1,6 @@
 import { ClearTasks } from "@/components/clear-tasks";
 import { DeleteTask } from "@/components/delete-task";
 import { EditTask } from "@/components/edit-task";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,8 +45,8 @@ export default function Home() {
             </Badge>
           </div>
 
-          <div className="mt-4 border-b-1">
-            <div className="h-12 flex justify-between items-center border-t-1">
+          <div className="mt-4 border-b">
+            <div className="h-12 flex justify-between items-center border-t">
               <div className="w-1 h-full bg-green-300"></div>
 
               <p className="flex-1 px-2 text-sm">Estudar React</p>
