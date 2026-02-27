@@ -1,9 +1,14 @@
+"use server";
 import { prisma } from "@/lib/prisma";
 
 export async function getTasks() {
-  const tasks = await prisma.tasks.findMany();
+  try {
+    const tasks = await prisma.tasks.findMany();
 
-  if (!tasks) return;
+    if (!tasks) return;
 
-  return tasks;
+    return tasks;
+  } catch (error) {
+    throw error;
+  }
 }

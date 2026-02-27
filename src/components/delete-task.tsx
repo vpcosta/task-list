@@ -10,7 +10,13 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 
-export function DeleteTask() {
+type DeleteProps = {
+  id: string;
+  task: string;
+  onConfirmDelete: (id: string) => void;
+};
+
+export function DeleteTask({ id, task, onConfirmDelete }: DeleteProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -23,12 +29,17 @@ export function DeleteTask() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Deseja realmente excluir esta tarefa?
+            Deseja realmente excluir a tarefa {task}?
           </AlertDialogTitle>
         </AlertDialogHeader>
 
         <AlertDialogFooter className="flex flex-row w-full">
-          <AlertDialogAction className="flex w-1/2">Sim</AlertDialogAction>
+          <AlertDialogAction
+            onClick={() => onConfirmDelete(id)}
+            className="flex w-1/2"
+          >
+            Sim
+          </AlertDialogAction>
 
           <AlertDialogCancel className="flex w-1/2">Cancelar</AlertDialogCancel>
         </AlertDialogFooter>

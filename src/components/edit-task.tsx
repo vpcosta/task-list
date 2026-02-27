@@ -1,3 +1,4 @@
+"use client";
 import { Edit } from "lucide-react";
 import {
   Dialog,
@@ -8,10 +9,20 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useState } from "react";
 
-export function EditTask() {
+type EditTaskProps = {
+  id: string;
+  currentName: string;
+  onConfirmEdit: (id: string, newName: string) => void;
+};
+
+export function EditTask({ id, currentName, onConfirmEdit }: EditTaskProps) {
+  const [name, setName] = useState(currentName ?? "");
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Edit
           size={16}
@@ -25,9 +36,21 @@ export function EditTask() {
         </DialogHeader>
 
         <div className="flex gap-2">
-          <Input placeholder="Nome da tarefa" />
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nome da tarefa"
+          />
 
-          <Button className="cursor-pointer">Salvar</Button>
+          <Button
+            onClick={() => {
+              onConfirmEdit(id, name);
+              setOpen(false);
+            }}
+            className="cursor-pointer"
+          >
+            Salvar
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
