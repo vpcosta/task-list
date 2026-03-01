@@ -229,7 +229,10 @@ export default function Home() {
           <div className="flex w-full justify-between">
             <div className="flex items-center gap-2">
               <ListCheck size={14} />
-              <p className="text-sm">Tarefas concluídas (3/3)</p>
+              <p className="text-sm">
+                Tarefas concluídas ({tasks.filter((task) => task.done).length}/
+                {tasks.length})
+              </p>
             </div>
 
             <ClearTasks />
@@ -237,8 +240,10 @@ export default function Home() {
 
           <div className="mt-4 mb-2 w-full h-2 rounded-md bg-gray-200">
             <div
-              className="h-2 rounded-md bg-rose-500"
-              style={{ width: "33%" }}
+              className="h-2 rounded-md bg-rose-500 transition-all"
+              style={{
+                width: `${(tasks.filter((task) => task.done).length / tasks.length) * 100}%`,
+              }}
             ></div>
           </div>
         </CardFooter>
