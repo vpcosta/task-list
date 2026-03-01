@@ -7,7 +7,7 @@ import { updateTask } from "@/actions/update-task";
 import { ClearTasks } from "@/components/clear-tasks";
 import { DeleteTask } from "@/components/delete-task";
 import { EditTask } from "@/components/edit-task";
-import { Badge } from "@/components/ui/badge";
+import { Filter, FilterType } from "@/components/filter";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,21 +18,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tasks } from "@/generated/prisma/client";
-import {
-  List,
-  ListCheck,
-  ListChecks,
-  ListX,
-  LoaderCircle,
-  Plus,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { ListCheck, LoaderCircle, Plus } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 export default function Home() {
   const [tasks, setTasks] = useState<Tasks[]>([]);
   const [task, setTask] = useState("");
   const [loading, setLoading] = useState(false);
+  const [currentFilter, setCurrentFilter] = useState<FilterType>("all");
 
   async function handleGetTasks() {
     try {
@@ -144,6 +138,17 @@ export default function Home() {
     }
   }
 
+  const filteredTasks = useMemo(() => {
+    switch (currentFilter) {
+      case "completed":
+        return tasks.filter((task) => task.done);
+      case "pending":
+        return tasks.filter((task) => !task.done);
+      default:
+        return tasks;
+    }
+  }, [tasks, currentFilter]);
+
   useEffect(() => {
     async function fetchTasks() {
       await handleGetTasks();
@@ -175,22 +180,10 @@ export default function Home() {
         <CardContent>
           <Separator />
 
-          <div className="mt-5 flex gap-2">
-            <Badge variant="default" className="cursor-pointer">
-              <List />
-              Todas
-            </Badge>
-
-            <Badge variant="outline" className="cursor-pointer">
-              <ListChecks />
-              Concluídas
-            </Badge>
-
-            <Badge variant="outline" className="cursor-pointer">
-              <ListX />
-              Não Concluídas
-            </Badge>
-          </div>
+          <Filter
+            currentFilter={currentFilter}
+            setCurrentFilter={setCurrentFilter}
+          />
 
           <div className="mt-4 border-b">
             {tasks.length === 0 && (
@@ -199,9 +192,8 @@ export default function Home() {
               </p>
             )}
 
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
               <div
-                onClick={() => handleToggleTask(task.id)}
                 className="h-12 flex hover:bg-slate-50 hover:text-slate-600 cursor-pointer justify-between items-center border-t"
                 key={task.id}
               >
@@ -210,6 +202,7 @@ export default function Home() {
                 ></div>
 
                 <p
+                  onClick={() => handleToggleTask(task.id)}
                   className={`${task.done ? "text-slate-400  italic line-through" : ""} flex-1 px-2 text-sm`}
                 >
                   {task.task}
@@ -244,7 +237,7 @@ export default function Home() {
 
           <div className="mt-4 mb-2 w-full h-2 rounded-md bg-gray-200">
             <div
-              className="h-2 rounded-md bg-blue-500"
+              className="h-2 rounded-md bg-rose-500"
               style={{ width: "33%" }}
             ></div>
           </div>
