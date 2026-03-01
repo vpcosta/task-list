@@ -36,12 +36,14 @@ export function DeleteTask({ id, task, onConfirmDelete }: DeleteProps) {
         <AlertDialogFooter className="flex flex-row w-full">
           <AlertDialogAction
             onClick={() => onConfirmDelete(id)}
-            className="flex w-1/2"
+            className="flex w-1/2 cursor-pointer"
           >
             Sim
           </AlertDialogAction>
 
-          <AlertDialogCancel className="flex w-1/2">Cancelar</AlertDialogCancel>
+          <AlertDialogCancel className="flex w-1/2 cursor-pointer">
+            Cancelar
+          </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

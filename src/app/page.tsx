@@ -1,5 +1,6 @@
 "use client";
 import { addTask } from "@/actions/add-task";
+import { deleteDoneTask } from "@/actions/clear-done-tasks";
 import { deleteTask } from "@/actions/delete-task";
 import { getTasks } from "@/actions/get-tasks-db";
 import { toggleTaskStatus } from "@/actions/toggle-task";
@@ -138,6 +139,25 @@ export default function Home() {
     }
   }
 
+  async function handleDeleteDoneTasks() {
+    const previousTasks = tasks;
+
+    try {
+      const allTasks = await deleteDoneTask();
+
+      if (!allTasks) return;
+
+      setTasks(allTasks);
+
+      toast.error("Tarefas concluídas deletadas!");
+
+      await handleGetTasks();
+    } catch (err) {
+      setTasks(previousTasks);
+      console.log(err);
+    }
+  }
+
   const filteredTasks = useMemo(() => {
     switch (currentFilter) {
       case "completed":
@@ -235,7 +255,10 @@ export default function Home() {
               </p>
             </div>
 
-            <ClearTasks />
+            <ClearTasks
+              totalTasks={tasks.filter((task) => task.done).length}
+              onDeleteDoneTasks={handleDeleteDoneTasks}
+            />
           </div>
 
           <div className="mt-4 mb-2 w-full h-2 rounded-md bg-gray-200">
